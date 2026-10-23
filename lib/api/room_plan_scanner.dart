@@ -25,14 +25,12 @@ class RoomPlanScanner {
   /// Indicates whether the current device can run RoomPlan.
   static Future<bool> isSupported() => RoomPlanChannel.isSupported();
 
-  /// Opens the native capture interface and returns its final room, if saved.
+  /// Opens the native capture interface and returns the final room scan.
   ///
   /// Returns `null` when the capture is cancelled.
-  Future<ScanResult?> startScanning({ScanConfiguration? configuration}) async {
+  Future<ScanResult?> startScanning() async {
     _ensureOpen();
-    final payload = await _channel.startRoomCapture(
-      configuration: configuration,
-    );
+    final payload = await _channel.startRoomCapture();
     if (payload == null) return null;
     if (payload is! String) {
       throw const FormatException('RoomPlan returned an invalid scan result.');
@@ -62,7 +60,7 @@ class RoomPlanScanner {
   }
 }
 
-/// Decodes serialized geometry and logs malformed native updates in debug mode.
+/// Parses a serialized RoomPlan result, returning `null` for invalid input.
 ScanResult? parseScanResult(String? source) {
   if (source == null || source.isEmpty) return null;
   try {

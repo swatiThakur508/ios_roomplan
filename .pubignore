@@ -4,5 +4,11 @@ build/
 example/build/
 example/ios/Pods/
 coverage/
+test/
+example/test/
+example/integration_test/
+lib/src/performance/
+lib/src/mapper.dart
+lib/src/floor_plan/services/merged_floor_plan_layout_service.dart
 *.iml
 flutter_*.log

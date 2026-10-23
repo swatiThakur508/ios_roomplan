@@ -8,7 +8,6 @@ import UIKit
 final class IosRoomPlanController: NSObject, RoomCaptureViewDelegate, RoomCaptureSessionDelegate, FlutterStreamHandler {
   static let shared = IosRoomPlanController()
 
-  var channel: FlutterMethodChannel?
   private var eventSink: FlutterEventSink?
   private var captureView: RoomCaptureView?
   private var captureScreen: UIViewController?
@@ -27,7 +26,7 @@ final class IosRoomPlanController: NSObject, RoomCaptureViewDelegate, RoomCaptur
     return false
   }
 
-  func startSession(with options: [String: Any]?, result: @escaping FlutterResult) {
+  func startSession(result: @escaping FlutterResult) {
     onMain { [weak self] in
       guard let self else { return }
       guard completion == nil else {

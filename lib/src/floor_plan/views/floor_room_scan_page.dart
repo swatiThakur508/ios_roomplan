@@ -6,9 +6,15 @@ import 'package:ios_roomplan/api/room_plan_scanner.dart';
 import 'package:ios_roomplan/src/internal.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+/// The PDF and USDZ files created by a completed [FloorRoomScanPage] scan.
 class FloorRoomScanResult {
+  /// Creates a scan result from its name and generated output files.
   final String name;
+
+  /// The 2D floor plan PDF saved in the app's documents directory.
   final File pdfFile;
+
+  /// The native 3D room model exported as a USDZ in the temporary directory.
   final File modelFile;
 
   const FloorRoomScanResult({
@@ -20,8 +26,12 @@ class FloorRoomScanResult {
 
 /// Scans a real room and saves its 2D floor plan PDF and 3D USDZ model.
 class FloorRoomScanPage extends StatefulWidget {
+  /// The suggested name used for the saved floor plan and scan result.
   final String initialName;
 
+  /// Presents the iOS RoomPlan scanning workflow.
+  ///
+  /// The scan requires iOS 16 or later and a supported LiDAR-equipped device.
   const FloorRoomScanPage({super.key, required this.initialName});
 
   @override
@@ -33,13 +43,6 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
   bool _includeDoors = true;
   bool _includeWindows = true;
   double _minimumConfidence = 0.0;
-
-  ScanConfiguration get _configuration => ScanConfiguration.accurate(
-    detectFurniture: _includeFurniture,
-    detectDoors: _includeDoors,
-    detectWindows: _includeWindows,
-    minimumConfidence: _minimumConfidence,
-  );
 
   late RoomPlanScanner _scanner;
   StreamSubscription<ScanResult?>? _scanSubscription;
@@ -113,9 +116,7 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
 
     try {
       await WakelockPlus.enable();
-      final rawScan = await _scanner.startScanning(
-        configuration: _configuration,
-      );
+      final rawScan = await _scanner.startScanning();
       final scan = rawScan == null ? null : _applyOutputSettings(rawScan);
       if (!mounted) return;
       if (scan == null) {
@@ -144,13 +145,6 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
         previewOnly: true,
       );
       generatedPdfFile = pdfFile;
-      await FloorPlanPdfService.saveScanGeometry(
-        scanResult: scan,
-        roomName: name,
-        pdfFile: pdfFile,
-        detectFurniture: _configuration.detectFurniture,
-      );
-
       await _validateOutput(modelFile, '3D model');
       await _validateOutput(pdfFile, '2D floor plan');
       if (!mounted) return;
@@ -166,13 +160,6 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
         setState(() => _status = _errorMessage(error));
       }
       await _deleteIfPresent(generatedPdfFile);
-      if (generatedPdfFile != null) {
-        final path = generatedPdfFile.path;
-        final basePath = path.toLowerCase().endsWith('.pdf')
-            ? path.substring(0, path.length - 4)
-            : path;
-        await _deleteIfPresent(File('$basePath.roomplan.json'));
-      }
       await _deleteIfPresent(generatedModelFile);
     } finally {
       await WakelockPlus.disable();

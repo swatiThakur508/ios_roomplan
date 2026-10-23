@@ -5,13 +5,13 @@
 Pod::Spec.new do |s|
   s.name             = 'ios_roomplan'
   s.version          = '0.1.0'
-  s.summary          = 'RoomPlan scanning and editable floor plans for iOS.'
+  s.summary          = 'RoomPlan scanning with 2D PDF and 3D USDZ output for Flutter.'
   s.description      = <<-DESC
-RoomPlan scanning and editable floor plans for iOS.
+Scan real rooms on supported iOS devices and save a 2D floor plan PDF and 3D USDZ model.
                        DESC
-  s.homepage         = 'https://pub.dev/packages/ios_roomplan'
+  s.homepage         = 'https://github.com/swatiThakur508/ios_roomplan'
   s.license          = { :file => '../LICENSE' }
-  s.author           = 'GEITPL'
+  s.author           = 'Swati Thakur'
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
@@ -23,9 +23,4 @@ RoomPlan scanning and editable floor plans for iOS.
   s.resource_bundles = {'ios_roomplan_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
   s.frameworks = 'RoomPlan', 'ARKit', 'AVFoundation', 'PDFKit', 'QuickLook'
 
-  # If your plugin requires a privacy manifest, for example if it uses any
-  # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
-  # plugin's privacy impact, and then uncomment this line. For more information,
-  # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-  # s.resource_bundles = {'ios_roomplan_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

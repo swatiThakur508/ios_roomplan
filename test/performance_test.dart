@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_roomplan/src/performance/object_pool.dart';
-import 'package:ios_roomplan/src/performance/optimized_mapper.dart';
 import 'package:ios_roomplan/src/performance/performance_monitor.dart';
 import 'package:ios_roomplan/src/mapper.dart';
 import 'package:vector_math/vector_math_64.dart';

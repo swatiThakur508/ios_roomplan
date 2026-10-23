@@ -29,9 +29,7 @@ public final class IosRoomplanPlugin: NSObject, FlutterPlugin {
     case "isSupported":
       result(IosRoomPlanController.supported)
     case "startRoomCapture":
-      IosRoomPlanController.shared.startSession(
-        with: call.arguments as? [String: Any], result: result
-      )
+      IosRoomPlanController.shared.startSession(result: result)
     case "stopRoomCapture":
       IosRoomPlanController.shared.stopSession(result: result)
     case "exportLastCapture":

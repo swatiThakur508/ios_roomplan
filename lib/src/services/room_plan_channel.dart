@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:ios_roomplan/src/internal.dart';
+import 'package:ios_roomplan/api/exceptions.dart';
 
 /// Sends scan commands to the iOS RoomPlan implementation and receives updates.
 class RoomPlanChannel {
@@ -20,21 +20,14 @@ class RoomPlanChannel {
   final EventChannel _events;
   final StreamController<dynamic> _updates =
       StreamController<dynamic>.broadcast();
-  final StreamController<Map<String, dynamic>> _results =
-      StreamController<Map<String, dynamic>>.broadcast();
   late final StreamSubscription<dynamic> _eventSubscription;
   bool _disposed = false;
 
   Stream<dynamic> get scanUpdateStream => _updates.stream;
-  Stream<Map<String, dynamic>> get scanResultStream => _results.stream;
-
-  Future<dynamic> startRoomCapture({ScanConfiguration? configuration}) async {
+  Future<dynamic> startRoomCapture() async {
     _ensureOpen();
     try {
-      return await _methods.invokeMethod<dynamic>(
-        'startRoomCapture',
-        configuration?.toMap(),
-      );
+      return await _methods.invokeMethod<dynamic>('startRoomCapture');
     } on PlatformException catch (error) {
       throw _translate(error);
     }
@@ -114,6 +107,5 @@ class RoomPlanChannel {
     _disposed = true;
     unawaited(_eventSubscription.cancel());
     unawaited(_updates.close());
-    unawaited(_results.close());
   }
 }
