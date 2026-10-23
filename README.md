@@ -17,21 +17,11 @@ the current device.
 
 ## Install
 
-To use the latest source from GitHub:
+Install the published package from pub.dev:
 
 ```yaml
 dependencies:
-  ios_roomplan:
-    git:
-      url: https://github.com/swatiThakur508/ios_roomplan.git
-      ref: main
-```
-
-To use a release from pub.dev:
-
-```yaml
-dependencies:
-  ios_roomplan: ^0.1.0
+  ios_roomplan: ^0.1.2
 ```
 
 For local plugin development, use a path dependency instead:
