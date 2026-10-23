@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Expand Dart API documentation for exceptions, confidence values, and
+  measurement units.
+
 ## 0.1.0
 
 - Add iOS room capture with Apple's RoomPlan API.

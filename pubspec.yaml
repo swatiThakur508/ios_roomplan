@@ -1,6 +1,6 @@
 name: ios_roomplan
 description: Scan real rooms on supported iOS devices and save 2D floor plans and 3D USDZ models.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/swatiThakur508/ios_roomplan
 homepage: https://github.com/swatiThakur508/ios_roomplan
 issue_tracker: https://github.com/swatiThakur508/ios_roomplan/issues
