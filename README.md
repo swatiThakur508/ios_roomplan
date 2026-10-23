@@ -17,8 +17,7 @@ the current device.
 
 ## Install
 
-The package has not yet been published to pub.dev. Until its first release, add
-it from GitHub:
+To use the latest source from GitHub:
 
 ```yaml
 dependencies:
@@ -28,7 +27,7 @@ dependencies:
       ref: main
 ```
 
-After publication, use the version shown on pub.dev:
+To use a release from pub.dev:
 
 ```yaml
 dependencies:
