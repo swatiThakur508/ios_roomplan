@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Use the published pub.dev package in the installation instructions.
+- Remove the unused direct `image` dependency and use the version selected by
+  `pdf`.
+
 ## 0.1.1
 
 - Expand Dart API documentation for exceptions, confidence values, and

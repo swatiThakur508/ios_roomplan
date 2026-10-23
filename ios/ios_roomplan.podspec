@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'ios_roomplan'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'RoomPlan scanning with 2D PDF and 3D USDZ output for Flutter.'
   s.description      = <<-DESC
 Scan real rooms on supported iOS devices and save a 2D floor plan PDF and 3D USDZ model.
