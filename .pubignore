@@ -1,0 +1,8 @@
+build/
+.dart_tool/
+.idea/
+example/build/
+example/ios/Pods/
+coverage/
+*.iml
+flutter_*.log
