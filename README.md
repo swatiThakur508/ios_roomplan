@@ -6,7 +6,7 @@ for capture and Quick Look to preview the saved files.
 
 ## Demo
 
-[Watch the room scanning demo](assets/ios_roomplan.mov)
+[Watch the room scanning demo](assets/assets_ios_roomplan.mp4)
 
 ## Requirements
 
