@@ -4,6 +4,10 @@ A Flutter plugin for scanning real rooms on supported iOS devices and saving a
 2D floor plan PDF and a 3D USDZ model. The package uses Apple's RoomPlan API
 for capture and Quick Look to preview the saved files.
 
+## Demo
+
+[Watch the room scanning demo](assets/ios_roomplan.mov)
+
 ## Requirements
 
 - Flutter 3.35 or later and Dart 3.9 or later.
