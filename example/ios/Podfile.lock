@@ -2,7 +2,7 @@ PODS:
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
-  - ios_roomplan (0.1.0):
+  - ios_roomplan (0.1.2):
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
@@ -43,7 +43,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  ios_roomplan: c9d470cf7e9d539459ae38d2d93c91ce7b1d8a6e
+  ios_roomplan: a09cf427c9f20e4b1e43cb8303a71e97d48f144c
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
