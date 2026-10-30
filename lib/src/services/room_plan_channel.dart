@@ -33,6 +33,15 @@ class RoomPlanChannel {
     }
   }
 
+  Future<dynamic> startMultiRoomCapture() async {
+    _ensureOpen();
+    try {
+      return await _methods.invokeMethod<dynamic>('startMultiRoomCapture');
+    } on PlatformException catch (error) {
+      throw _translate(error);
+    }
+  }
+
   Future<void> stopRoomCapture() async {
     _ensureOpen();
     try {
@@ -48,6 +57,18 @@ class RoomPlanChannel {
       return await const MethodChannel(
             'ios_roomplan/method_channel',
           ).invokeMethod<bool>('isSupported') ??
+          false;
+    } on PlatformException catch (error) {
+      throw NativeChannelException(_describe(error));
+    }
+  }
+
+  static Future<bool> isMultiRoomSupported() async {
+    if (!Platform.isIOS) return false;
+    try {
+      return await const MethodChannel(
+            'ios_roomplan/method_channel',
+          ).invokeMethod<bool>('isMultiRoomSupported') ??
           false;
     } on PlatformException catch (error) {
       throw NativeChannelException(_describe(error));

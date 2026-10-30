@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:ios_roomplan/src/internal.dart';
@@ -25,6 +26,11 @@ class RoomPlanScanner {
   /// Indicates whether the current device can run RoomPlan.
   static Future<bool> isSupported() => RoomPlanChannel.isSupported();
 
+  /// Indicates whether the current device can scan and merge multiple rooms.
+  /// Multi-room RoomPlan capture requires iOS 17 or later.
+  static Future<bool> isMultiRoomSupported() =>
+      RoomPlanChannel.isMultiRoomSupported();
+
   /// Opens the native capture interface and returns the final room scan.
   ///
   /// Returns `null` when the capture is cancelled.
@@ -40,6 +46,42 @@ class RoomPlanScanner {
       throw const FormatException('RoomPlan returned unreadable scan data.');
     }
     return result;
+  }
+
+  /// Scans connected rooms and exports them as one USDZ structure.
+  ///
+  /// The user scans a room, chooses whether to scan another room or finish the
+  /// structure, and repeats. Apple merges the rooms only when they share a
+  /// compatible world coordinate space. This method requires iOS 17 or later.
+  Future<MultiRoomScanResult> startMultiRoomScanning() async {
+    _ensureOpen();
+    final payload = await _channel.startMultiRoomCapture();
+    if (payload is! Map) {
+      throw const FormatException(
+        'RoomPlan returned an invalid structure result.',
+      );
+    }
+    final value = Map<String, dynamic>.from(payload);
+    final roomValues = value['rooms'];
+    if (roomValues is! List) {
+      throw const FormatException('RoomPlan returned no room list.');
+    }
+    final rooms = roomValues
+        .whereType<Map>()
+        .map((room) => ScanResult.fromJson(Map<String, dynamic>.from(room)))
+        .toList(growable: false);
+    final path = value['modelPath']?.toString() ?? '';
+    if (rooms.isEmpty || path.trim().isEmpty) {
+      throw const FormatException('RoomPlan returned an incomplete structure.');
+    }
+    final model = File(path);
+    if (!await model.exists() || await model.length() == 0) {
+      throw FileSystemException(
+        'The merged 3D structure was not created.',
+        path,
+      );
+    }
+    return MultiRoomScanResult(rooms: rooms, modelFile: model);
   }
 
   /// Ends the active capture and returns control to the Flutter app.
