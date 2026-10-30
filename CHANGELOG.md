@@ -11,9 +11,10 @@
 - Expand the example app with saved-scan management, review hints, and a combined multi-room PDF workflow.
 - Document scan retention, data-model limitations, calculations, and device support in the README.
 
-## Unreleased
+## 0.2.1
 
-No unreleased changes.
+- Fix all Dart analyzer findings in the example, scan library, and persistence test.
+- Clarify that the plugin supports iOS only and depends on native iOS frameworks.
 
 ## 0.1.2
 

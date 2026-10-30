@@ -154,8 +154,9 @@ class RoomPlanScanLibrary {
     record['name'] = cleanName;
     await _writeJsonAtomically(File('${directory.path}/scan.json'), record);
     final renamed = await _readEntry(directory);
-    if (renamed == null)
+    if (renamed == null) {
       throw StateError('Saved scan $safeId could not be read.');
+    }
     return renamed;
   }
 
@@ -194,8 +195,9 @@ class RoomPlanScanLibrary {
 
   Future<Directory> _rootDirectory() async {
     final supplied = _providedDirectory;
-    if (supplied != null)
+    if (supplied != null) {
       return Directory('${supplied.path}/ios_roomplan_scans');
+    }
     final support = await getApplicationSupportDirectory();
     return Directory('${support.path}/ios_roomplan_scans');
   }
