@@ -457,7 +457,3 @@ Run it on a supported physical iPhone or iPad. The example screen starts a scan 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
-## Publishing a new version
-
-This release is `0.2.0`. Keep `version` in `pubspec.yaml`, `s.version` in `ios/ios_roomplan.podspec`, and the installation example above in sync for future releases. From the package root, review the archive with `flutter pub publish --dry-run`; resolve every validation warning before publishing with `flutter pub publish`. Test scanning on a supported physical LiDAR device; a simulator build cannot validate RoomPlan capture or structure merging.
