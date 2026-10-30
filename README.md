@@ -54,6 +54,8 @@ The scan page's display options can filter furniture, doors, windows, and minimu
 
 ## Requirements and device support
 
+This package supports **iOS only**. Android, web, and desktop implementations are not provided; the scanner, file previews, and share sheet use native iOS frameworks.
+
 - iOS 16 or later.
 - A physical iPhone or iPad with a LiDAR scanner and RoomPlan support.
 - Xcode and CocoaPods to build the iOS host app.

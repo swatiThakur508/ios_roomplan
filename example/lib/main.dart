@@ -47,12 +47,13 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
   Future<void> _refreshLibrary() async {
     try {
       final scans = await _library.listScans();
-      if (mounted)
+      if (mounted) {
         setState(() {
           _savedScans
             ..clear()
             ..addAll(scans);
         });
+      }
     } catch (error) {
       if (mounted) setState(() => _error = _readableError(error));
     }
@@ -90,6 +91,7 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
             rooms: rooms,
           );
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -100,8 +102,9 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
         return;
       }
       final scan = result.scanResult;
-      if (scan == null)
+      if (scan == null) {
         throw StateError('The completed scan data was not returned.');
+      }
       final saved = await _library.save(
         name: result.name,
         scanResult: scan,
@@ -247,11 +250,12 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
     if (confirm != true) return;
     try {
       await _library.delete(saved.id);
-      if (mounted)
+      if (mounted) {
         setState(() {
           _savedScans.removeWhere((scan) => scan.id == saved.id);
           if (_capture?.libraryId == saved.id) _capture = null;
         });
+      }
     } catch (error) {
       if (mounted) setState(() => _error = _readableError(error));
     }
@@ -262,10 +266,11 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
       await Clipboard.setData(
         ClipboardData(text: await _library.exportJson(saved.id)),
       );
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Scan JSON copied to clipboard')),
         );
+      }
     } catch (error) {
       if (mounted) setState(() => _error = _readableError(error));
     }
@@ -286,8 +291,9 @@ class _RoomPlanCapturePageState extends State<RoomPlanCapturePage> {
           ),
         );
       }
-      if (rooms.isEmpty)
+      if (rooms.isEmpty) {
         throw StateError('No saved floor plan files are available.');
+      }
       final pdf = await FloorPlanPdfService.createMerged2DFloorPlan(
         rooms,
         title: 'Saved room scans',
