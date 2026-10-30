@@ -133,6 +133,40 @@ class FloorPlanPdfService {
     return file;
   }
 
+  /// Creates one PDF page per room from a native multi-room capture.
+  static Future<File> createMultiRoom2DFloorPlan(
+    List<ScanResult> rooms, {
+    String? title,
+    String? fileName,
+    List<String>? roomNames,
+  }) {
+    if (rooms.isEmpty) {
+      throw ArgumentError.value(
+        rooms,
+        'rooms',
+        'At least one room is required.',
+      );
+    }
+    if (roomNames != null && roomNames.length != rooms.length) {
+      throw ArgumentError.value(
+        roomNames,
+        'roomNames',
+        'Provide one name for each room.',
+      );
+    }
+    return createMerged2DFloorPlan(
+      [
+        for (var index = 0; index < rooms.length; index++)
+          NamedScanResult(
+            name: roomNames?[index] ?? 'Room ${index + 1}',
+            scanResult: rooms[index],
+          ),
+      ],
+      title: title,
+      fileName: fileName,
+    );
+  }
+
   static Future<File> createArrangedMerged2DFloorPlan(
     List<ArrangedScanResult> rooms, {
     String? title,
@@ -692,7 +726,7 @@ class FloorPlanPdfService {
 class NamedScanResult {
   final String name;
   final ScanResult scanResult;
-  final File pdfFile;
+  final File? pdfFile;
   final List<RoomSampleLocation> sampleLocations;
   final double sampleRotationRadians;
   final List<PlanSurfaceSnapshot>? surfaceSnapshots;
@@ -701,7 +735,7 @@ class NamedScanResult {
   const NamedScanResult({
     required this.name,
     required this.scanResult,
-    required this.pdfFile,
+    this.pdfFile,
     this.sampleLocations = const [],
     this.sampleRotationRadians = 0,
     this.surfaceSnapshots,
@@ -2202,13 +2236,19 @@ String? _safeImageDataUri(String? logoImageDataUri) {
 void _drawDefaultLogo(StringBuffer buffer) {
   buffer.writeln('<g transform="translate(28 24)">');
   buffer.writeln(
-    '<text x="0" y="20" font-family="Helvetica" font-size="24" font-weight="700" fill="#111827">iSpec</text>',
+    '<rect x="0" y="0" width="32" height="32" rx="6" fill="#0f766e"/>',
   );
   buffer.writeln(
-    '<text x="65" y="20" font-family="Helvetica" font-size="24" font-weight="700" fill="#f97316">X</text>',
+    '<path d="M6 15 L16 7 L26 15 V26 H6 Z" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>',
   );
   buffer.writeln(
-    '<text x="1" y="34" font-family="Helvetica" font-size="7.5" font-weight="700" fill="#6b7280">ROOMPLAN EXHIBIT</text>',
+    '<path d="M13 26 V18 H19 V26 M6 15 H10 M22 15 H26" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>',
+  );
+  buffer.writeln(
+    '<text x="42" y="17" font-family="Helvetica" font-size="17" font-weight="700" letter-spacing="0.5" fill="#111827">ROOM PLAN</text>',
+  );
+  buffer.writeln(
+    '<text x="43" y="30" font-family="Helvetica" font-size="7.5" font-weight="700" letter-spacing="1.1" fill="#6b7280">2D FLOOR PLAN</text>',
   );
   buffer.writeln('</g>');
 }

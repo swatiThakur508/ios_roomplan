@@ -2,6 +2,7 @@
 export '../api/exceptions.dart';
 export '../api/models/confidence.dart';
 export '../api/models/measurement_unit.dart';
+export '../api/models/multi_room_scan_result.dart';
 export '../api/models/object_data.dart';
 export '../api/models/opening_data.dart';
 export '../api/models/position.dart';

@@ -17,10 +17,22 @@ class FloorRoomScanResult {
   /// The native 3D room model exported as a USDZ in the temporary directory.
   final File modelFile;
 
+  /// Processed room geometry and scan metadata, available for saving or review.
+  final ScanResult? scanResult;
+
+  /// Optional ID assigned by [RoomPlanScanLibrary] when the scan is saved.
+  final String? libraryId;
+
+  /// Per-room results when the page was opened in multi-room mode.
+  final List<ScanResult> rooms;
+
   const FloorRoomScanResult({
     required this.name,
     required this.pdfFile,
     required this.modelFile,
+    this.scanResult,
+    this.libraryId,
+    this.rooms = const [],
   });
 }
 
@@ -29,10 +41,18 @@ class FloorRoomScanPage extends StatefulWidget {
   /// The suggested name used for the saved floor plan and scan result.
   final String initialName;
 
+  /// Scans connected rooms into one native USDZ structure when true.
+  /// Requires iOS 17 or later. The default single-room mode supports iOS 16.
+  final bool multiRoom;
+
   /// Presents the iOS RoomPlan scanning workflow.
   ///
   /// The scan requires iOS 16 or later and a supported LiDAR-equipped device.
-  const FloorRoomScanPage({super.key, required this.initialName});
+  const FloorRoomScanPage({
+    super.key,
+    required this.initialName,
+    this.multiRoom = false,
+  });
 
   @override
   State<FloorRoomScanPage> createState() => _FloorRoomScanPageState();
@@ -85,13 +105,17 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
 
   Future<void> _checkSupport() async {
     try {
-      final supported = await RoomPlanScanner.isSupported();
+      final supported = widget.multiRoom
+          ? await RoomPlanScanner.isMultiRoomSupported()
+          : await RoomPlanScanner.isSupported();
       if (!mounted) return;
       setState(() {
         _isSupported = supported;
         _isCheckingSupport = false;
         _status = supported
             ? 'Ready to scan'
+            : widget.multiRoom
+            ? 'Multi-room scanning requires iOS 17 or later and a supported LiDAR device.'
             : 'Room scanning requires iOS 16 or later and a supported LiDAR device.';
       });
     } catch (error) {
@@ -116,40 +140,60 @@ class _FloorRoomScanPageState extends State<FloorRoomScanPage> {
 
     try {
       await WakelockPlus.enable();
-      final rawScan = await _scanner.startScanning();
-      final scan = rawScan == null ? null : _applyOutputSettings(rawScan);
-      if (!mounted) return;
-      if (scan == null) {
-        setState(() => _status = 'Scan cancelled. You can start again.');
-        return;
+      final List<ScanResult> scans;
+      final File modelFile;
+      if (widget.multiRoom) {
+        final structure = await _scanner.startMultiRoomScanning();
+        scans = structure.rooms.map(_applyOutputSettings).toList();
+        modelFile = structure.modelFile;
+      } else {
+        final rawScan = await _scanner.startScanning();
+        if (rawScan == null) {
+          if (mounted) {
+            setState(() => _status = 'Scan cancelled. You can start again.');
+          }
+          return;
+        }
+        scans = [_applyOutputSettings(rawScan)];
+        modelFile = await RoomPlanModelViewer.exportLastCapture();
       }
-      if (scan.room.walls.isEmpty) {
+      generatedModelFile = modelFile;
+      if (!mounted) return;
+      if (scans.any((scan) => scan.room.walls.isEmpty)) {
         throw const FormatException(
-          'No room walls were captured. Scan the room again, moving slowly and keeping the walls in view.',
+          'One or more rooms have no detected walls. Scan again, moving slowly and keeping the room boundaries in view.',
         );
       }
 
       setState(() => _isSaving = true);
-      setState(() => _status = 'Saving the 3D model…');
-      final modelFile = await RoomPlanModelViewer.exportLastCapture();
-      generatedModelFile = modelFile;
-
       setState(() => _status = 'Creating the 2D floor plan…');
       final name = widget.initialName.trim().isEmpty
-          ? 'Room Scan'
+          ? (widget.multiRoom ? 'Room Structure' : 'Room Scan')
           : widget.initialName.trim();
-      final pdfFile = await FloorPlanPdfService.create2DFloorPlan(
-        scan,
-        title: name,
-        fileName: name,
-        previewOnly: true,
-      );
+      final pdfFile = widget.multiRoom
+          ? await FloorPlanPdfService.createMultiRoom2DFloorPlan(
+              scans,
+              title: name,
+              fileName: name,
+            )
+          : await FloorPlanPdfService.create2DFloorPlan(
+              scans.single,
+              title: name,
+              fileName: name,
+              previewOnly: true,
+            );
       generatedPdfFile = pdfFile;
       await _validateOutput(modelFile, '3D model');
       await _validateOutput(pdfFile, '2D floor plan');
       if (!mounted) return;
       Navigator.of(context).pop(
-        FloorRoomScanResult(name: name, pdfFile: pdfFile, modelFile: modelFile),
+        FloorRoomScanResult(
+          name: name,
+          pdfFile: pdfFile,
+          modelFile: modelFile,
+          scanResult: widget.multiRoom ? null : scans.single,
+          rooms: scans,
+        ),
       );
     } catch (error) {
       if (_isCancelling && error is RoomPlanException) {

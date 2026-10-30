@@ -14,11 +14,17 @@ class ScanResult {
   final ScanMetadata metadata;
   final ScanConfidence confidence;
 
-  factory ScanResult.fromJson(Map<String, dynamic> json) => ScanResult(
-    room: RoomData.fromJson(_object(json['room'])),
-    metadata: ScanMetadata.fromJson(_object(json['metadata'])),
-    confidence: ScanConfidence.fromJson(_object(json['confidence'])),
-  );
+  factory ScanResult.fromJson(Map<String, dynamic> json) {
+    // Platform-channel maps can arrive as Map<Object?, Object?> rather than
+    // Map<String, dynamic>. Normalize recursively so nested room geometry is
+    // not silently replaced with empty collections by model decoders.
+    final normalized = _normalizeMap(json);
+    return ScanResult(
+      room: RoomData.fromJson(_object(normalized['room'])),
+      metadata: ScanMetadata.fromJson(_object(normalized['metadata'])),
+      confidence: ScanConfidence.fromJson(_object(normalized['confidence'])),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'room': room.toJson(),
@@ -53,3 +59,14 @@ class ScanResult {
 
 Map<String, dynamic> _object(Object? value) =>
     value is Map<String, dynamic> ? value : <String, dynamic>{};
+
+Map<String, dynamic> _normalizeMap(Map<dynamic, dynamic> value) => {
+  for (final entry in value.entries)
+    if (entry.key is String) entry.key as String: _normalizeValue(entry.value),
+};
+
+Object? _normalizeValue(Object? value) => switch (value) {
+  Map<dynamic, dynamic>() => _normalizeMap(value),
+  List<dynamic>() => value.map(_normalizeValue).toList(growable: false),
+  _ => value,
+};

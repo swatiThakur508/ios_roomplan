@@ -7,8 +7,17 @@ import UIKit
 @available(iOS 16.0, *)
 enum IosRoomPlanJSONConverter {
   static func encode(room: CapturedRoom, startedAt: Date?, lidar: Bool) throws -> String {
+    let payload = dictionary(room: room, startedAt: startedAt, lidar: lidar)
+    let data = try JSONSerialization.data(withJSONObject: payload, options: [.fragmentsAllowed])
+    guard let text = String(data: data, encoding: .utf8) else {
+      throw CocoaError(.fileWriteInapplicableStringEncoding)
+    }
+    return text
+  }
+
+  static func dictionary(room: CapturedRoom, startedAt: Date?, lidar: Bool) -> [String: Any] {
     let elapsed = startedAt.map { max(0, Date().timeIntervalSince($0)) } ?? 0
-    let payload: [String: Any] = [
+    return [
       "room": [
         "walls": room.walls.map(surface),
         "objects": room.objects.map(object),
@@ -22,11 +31,6 @@ enum IosRoomPlanJSONConverter {
         "has_lidar": lidar,
       ],
     ]
-    let data = try JSONSerialization.data(withJSONObject: payload, options: [.fragmentsAllowed])
-    guard let text = String(data: data, encoding: .utf8) else {
-      throw CocoaError(.fileWriteInapplicableStringEncoding)
-    }
-    return text
   }
 
   private static func surface(_ item: CapturedRoom.Surface) -> [String: Any] {
