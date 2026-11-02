@@ -1,9 +1,6 @@
 name: ios_roomplan
-description: >-
-  A Flutter plugin that brings Apple's RoomPlan API to iOS for single-room
-  and multi-room scanning, with floor-plan PDFs, structured scan data, and
-  USDZ exports. #Flutter #iOS #RoomPlan #LiDAR
-version: 0.2.1
+description: iOS RoomPlan plugin for single and multi-room scans, 2D plans and 3D models. #roomplan #lidar #scanning
+version: 0.2.2
 repository: https://github.com/swatiThakur508/ios_roomplan
 homepage: https://github.com/swatiThakur508/ios_roomplan
 issue_tracker: https://github.com/swatiThakur508/ios_roomplan/issues
