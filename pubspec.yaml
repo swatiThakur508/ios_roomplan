@@ -1,6 +1,6 @@
 name: ios_roomplan
 description: iOS RoomPlan plugin for single and multi-room scans, 2D plans and 3D models. #roomplan #lidar #scanning
-version: 0.2.1
+version: 0.2.2
 repository: https://github.com/swatiThakur508/ios_roomplan
 homepage: https://github.com/swatiThakur508/ios_roomplan
 issue_tracker: https://github.com/swatiThakur508/ios_roomplan/issues
