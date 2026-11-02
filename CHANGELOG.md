@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.0 - 2026-10-30
+## 0.2.2
+
+- Shorten the package description and add RoomPlan topic tags for pub.dev.
+
+## 0.2.0 
 
 - Add iOS 17 multi-room capture using Apple's shared coordinate space and StructureBuilder, returning per-room scan data and a merged USDZ structure.
 - Add a multi-room scan flow to the example, including a PDF page per room and persistent merged model output.
